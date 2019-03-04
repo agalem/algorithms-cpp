@@ -98,6 +98,7 @@ double Polygon::countB(double x1, double x2, double y1, double y2) {
 }
 
 double Polygon::countX(double y, double x1, double x2, double y1, double y2) {
+    std::cout << "x1: " << x1 << " x2: " << x2 << " y1: " << y1 << " y2: " << y2 << std::endl;
     if(this->countA(x1, x2, y1, y2) != 0) {
         return (y / this->countA(x1, x2, y1, y2)) - (this->countB(x1, x2, y1, y2) / this->countA(x1, x2, y1, y2));
     } else {
@@ -108,20 +109,26 @@ double Polygon::countX(double y, double x1, double x2, double y1, double y2) {
 void Polygon::findTopCornersVectors(std::vector<double> &vectorAllX, std::vector<double> &vectorAllY) {
     std::vector<double> vecX = this->vectorX;
     std::vector<double> vecY = this->vectorY;
+    std::vector<double>::iterator it;
+
+    vecX.push_back(vecX[0]);
+    vecY.push_back(vecY[0]);
 
     for(int i=0; i<vecY.size(); i++) {
-        if(vecY[i] < this->minLocal &&
-           vecY[i+1] > this->minLocal &&
-           vecY[i+1] < this->maxLocal &&
-           vecY[i+1] > this->maxLocal) {
+        if(vecY[i] < this->minLocal && vecY[i+1] >= this->minLocal) {
             vectorAllX.push_back(vecX[i]);
             vectorAllX.push_back(vecX[i+1]);
             vectorAllY.push_back(vecY[i]);
             vectorAllY.push_back(vecY[i+1]);
-        } else if(vecY[i] == this->minLocal) {
+        } else if(vecY[i] >= this->minLocal && vecY[i+1] < this->minLocal ) {
             vectorAllX.push_back(vecX[i]);
+            vectorAllX.push_back(vecX[i+1]);
+            vectorAllY.push_back(vecY[i]);
+            vectorAllY.push_back(vecY[i+1]);
         }
     }
+    vectorAllY.erase(std::remove(vectorAllY.begin(), vectorAllY.end(), this->minLocal), vectorAllY.end());
+    vectorAllY.erase(std::remove(vectorAllY.begin(), vectorAllY.end(), this->maxLocal), vectorAllY.end());
 }
 
 void Polygon::setTopRightCornerX() {
@@ -134,6 +141,8 @@ void Polygon::setTopRightCornerX() {
     if(!vectorAllX.empty() && vectorAllY.empty()) {
         resultMaxIndex = std::max_element(vectorAllX.begin(), vectorAllX.end());
         this->topRightCornerX = vectorAllX[std::distance(vectorAllX.begin(), resultMaxIndex)];
+    } else {
+        this->topRightCornerX = this->countX(this->minLocal, vectorAllX[0], vectorAllX[1], vectorAllY[0], vectorAllY[1]);
     }
 
     std::cout << "Wektor X:" << std::endl;
@@ -146,6 +155,32 @@ void Polygon::setTopRightCornerX() {
     }
 
     std::cout << "\nPrawy górny róg: " << this->topRightCornerX << std::endl;
+
+}
+
+void Polygon::setTopLeftCornerX() {
+    std::vector<double>::iterator resultMinIndex;
+    std::vector<double> vectorAllX;
+    std::vector<double> vectorAllY;
+
+    this->findTopCornersVectors(vectorAllX, vectorAllY);
+
+    if(!vectorAllX.empty() && vectorAllY.empty()) {
+        resultMinIndex = std::min_element(vectorAllX.begin(), vectorAllX.end());
+        this->topLeftCornerX = vectorAllX[std::distance(vectorAllX.begin(), resultMinIndex)];
+    } else {
+        this->topLeftCornerX = this->countX(this->minLocal, vectorAllX[vectorAllX.size() - 2], vectorAllX.back(), vectorAllY[vectorAllY.size() - 2], vectorAllY.back());
+    }
+
+    std::cout << "\nLewy górny róg: " << this->topLeftCornerX << std::endl;
+
+}
+
+void Polygon::findBottomCornersVectors(std::vector<double> &vectorAllX, std::vector<double> &vectorAllY) {
+
+}
+
+void Polygon::setBottomLeftCornerX() {
 
 }
 

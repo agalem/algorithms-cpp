@@ -31,7 +31,10 @@ public:
     double countB(double x1, double x2, double y1, double y2);
     double countX(double y, double x1, double x2, double y1, double y2);
     void findTopCornersVectors(std::vector<double> &vectorAllX, std::vector<double> &vectorAllY);
+    void findBottomCornersVectors(std::vector<double> &vectorAllX, std::vector<double> &vectorAllY);
     void setTopRightCornerX();
+    void setTopLeftCornerX();
+    void setBottomLeftCornerX();
     void printOutput();
 };
 

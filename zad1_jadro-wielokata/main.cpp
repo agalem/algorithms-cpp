@@ -4,7 +4,11 @@ int main() {
     double arrX[] = {3, 4, 5, 6,6,5,4,2,1,2};
     double arrY[] = {1,3,1,3,5,6,5,6,5,3};
 
-    //double arrX[] = {};
+    //double arrX[] = { 11, 16, 13, 15, 12, 11, 10, 4, 7, 7, 10};
+    //double arrY[] = { 2, 5, 9, 11, 13, 7, 13, 4, 6, 2, 5};
+
+    //double arrX[] = {5, 6, 7, 8, 9, 12, 10, 12, 10, 8, 7, 4, 5, 3, 5, 3};
+    //double arrY[] = {3, 5, 3, 4, 3, 6, 8, 9, 13, 10, 13, 12, 11, 9, 8, 7};
 
     std::cout << "Rozmiar tab x: " << (sizeof(arrX)/sizeof(*arrX)) << " Rozmiar tab y: " << (sizeof(arrY)/sizeof(*arrY)) << std::endl;
 
@@ -14,6 +18,8 @@ int main() {
     Polygon polygon(vectorOfX, vectorOfY);
     polygon.printOutput();
     polygon.setTopRightCornerX();
+    polygon.setTopLeftCornerX();
+    polygon.setBottomLeftCornerX();
 
     return 0;
 }
