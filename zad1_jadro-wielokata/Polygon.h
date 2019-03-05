@@ -6,6 +6,7 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <math.h>
 
 #ifndef POLYGON_H
 #define POLYGON_H
@@ -17,11 +18,13 @@ private:
     double maxLocal;
     std::vector<double> vectorX;
     std::vector<double> vectorY;
-    bool isAllNucleus;
+    bool noMaxLoc;
+    bool noMinLoc;
     double topRightCornerX;
     double topLeftCornerX;
     double bottomRightCornerX;
     double bottomLeftCornerX;
+    double circuit;
 public:
     Polygon(std::vector<double > vectorOfX, std::vector<double> vectorOfY);
     int checkTurningDirection(int pointIndex);
@@ -30,11 +33,12 @@ public:
     double countA(double x1, double x2, double y1, double y2);
     double countB(double x1, double x2, double y1, double y2);
     double countX(double y, double x1, double x2, double y1, double y2);
-    void findTopCornersVectors(std::vector<double> &vectorAllX, std::vector<double> &vectorAllY);
-    void findBottomCornersVectors(std::vector<double> &vectorAllX, std::vector<double> &vectorAllY);
     void setTopRightCornerX();
     void setTopLeftCornerX();
     void setBottomLeftCornerX();
+    void setBottomRightCornerX();
+    double findSectionLength(double x1, double x2, double y1, double y2);
+    void setCircuit();
     void printOutput();
 };
 
