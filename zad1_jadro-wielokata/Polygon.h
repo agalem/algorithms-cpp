@@ -18,15 +18,11 @@ private:
     double maxLocal;
     std::vector<double> vectorX;
     std::vector<double> vectorY;
-    bool noMaxLoc;
-    bool noMinLoc;
     double topRightCornerX;
     double topLeftCornerX;
     double bottomRightCornerX;
     double bottomLeftCornerX;
     double circuit;
-public:
-    Polygon(std::vector<double > vectorOfX, std::vector<double> vectorOfY);
     int checkTurningDirection(int pointIndex);
     void getMaxAndMinLocal();
     int checkNucleus();
@@ -39,6 +35,8 @@ public:
     void setBottomRightCornerX();
     double findSectionLength(double x1, double x2, double y1, double y2);
     void setCircuit();
+public:
+    Polygon(std::vector<double > vectorOfX, std::vector<double> vectorOfY);
     void printOutput();
 };
 

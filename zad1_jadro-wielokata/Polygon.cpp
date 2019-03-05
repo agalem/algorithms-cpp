@@ -1,9 +1,6 @@
 #include "Polygon.h"
 
-Polygon::Polygon(std::vector<double > vectorOfX, std::vector<double > vectorOfY) : vectorX(std::move(vectorOfX)), vectorY(std::move(vectorOfY)) {
-    this->noMaxLoc = false;
-    this->noMinLoc = false;
-}
+Polygon::Polygon(std::vector<double > vectorOfX, std::vector<double > vectorOfY) : vectorX(std::move(vectorOfX)), vectorY(std::move(vectorOfY)) {}
 
 int Polygon::checkTurningDirection(int pointIndex) {
     int i = pointIndex;
@@ -28,10 +25,10 @@ int Polygon::checkTurningDirection(int pointIndex) {
     }
 
     double compute = ((x2 - x0)*(y1 - y0)) - ((x1-x0)*(y2-y0));
-    if(compute > 0 && y0 >= y1 && y1 <= y2 ) {
+    if(compute > 0 && y0 > y1 && y1 <= y2 ) {
         //z punktu przechodzimy w prawo, w górę osi y
         return -1;
-    } else if (compute > 0 && y0 <= y1 && y1 >= y2) {
+    } else if (compute > 0 && y0 < y1 && y1 >= y2) {
         //z punktu przechodzimy w prawo, w dół osi y
         return 1;
     }
@@ -57,7 +54,6 @@ void Polygon::getMaxAndMinLocal() {
     }
 
     if(vecMaxLoc.empty()){
-        this->noMaxLoc = true;
         vecMaxLoc = vecY;
         resultMaxIndex = std::min_element(vecMaxLoc.begin(), vecMaxLoc.end());
     } else {
@@ -65,7 +61,6 @@ void Polygon::getMaxAndMinLocal() {
     }
 
     if(vecMinLoc.empty()) {
-        this->noMinLoc = true;
         vecMinLoc = vecY;
         resultMinIndex = std::max_element(vecMinLoc.begin(), vecMinLoc.end());
     } else {
@@ -97,7 +92,7 @@ double Polygon::countB(double x1, double x2, double y1, double y2) {
 }
 
 double Polygon::countX(double y, double x1, double x2, double y1, double y2) {
-    std::cout << "x1: " << x1 << " x2: " << x2 << " y1: " << y1 << " y2: " << y2 << std::endl;
+//    std::cout << "x1: " << x1 << " x2: " << x2 << " y1: " << y1 << " y2: " << y2 << std::endl;
     if((y2 - y1) != 0 && (x2 - x1) == 0 ) {
         return x1;
     }
@@ -139,18 +134,18 @@ void Polygon::setTopRightCornerX() {
         this->topRightCornerX = this->countX(this->minLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
     }
 
-    std::cout << "Wektor X:" << std::endl;
-    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << "\nWektor Y: " << std::endl;
-    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-        std::cout << *it << " ";
-    }
-
-
-
-    std::cout << "\nPrawy górny róg: " << this->topRightCornerX << std::endl;
+//    std::cout << "Wektor X:" << std::endl;
+//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//    std::cout << "\nWektor Y: " << std::endl;
+//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//
+//
+//
+ std::cout << "\nPrawy górny róg: " << this->topRightCornerX << std::endl;
 
 }
 
@@ -183,16 +178,16 @@ void Polygon::setTopLeftCornerX() {
         this->topLeftCornerX = this->countX(this->minLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
     }
 
-
-    std::cout << "Wektor X:" << std::endl;
-    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << "\nWektor Y: " << std::endl;
-    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-        std::cout << *it << " ";
-    }
-
+//
+//    std::cout << "Wektor X:" << std::endl;
+//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//    std::cout << "\nWektor Y: " << std::endl;
+//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//
     std::cout << "\nLewy górny róg: " << this->topLeftCornerX << std::endl;
 
 }
@@ -227,15 +222,15 @@ void Polygon::setBottomLeftCornerX() {
         this->bottomLeftCornerX = this->countX(this->maxLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
     }
 
-    std::cout << "Wektor X:" << std::endl;
-    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << "\nWektor Y: " << std::endl;
-    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-        std::cout << *it << " ";
-    }
-
+//    std::cout << "Wektor X:" << std::endl;
+//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//    std::cout << "\nWektor Y: " << std::endl;
+//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//
     std::cout << "\nLewy dolny róg: " << this->bottomLeftCornerX << std::endl;
 
 }
@@ -269,15 +264,15 @@ void Polygon::setBottomRightCornerX() {
         this->bottomRightCornerX = this->countX(this->maxLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
     }
 
-    std::cout << "Wektor X:" << std::endl;
-    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << "\nWektor Y: " << std::endl;
-    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-        std::cout << *it << " ";
-    }
-
+//    std::cout << "Wektor X:" << std::endl;
+//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//    std::cout << "\nWektor Y: " << std::endl;
+//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//
     std::cout << "\nPrawy dolny róg: " << this->bottomRightCornerX << std::endl;
 }
 
@@ -298,46 +293,46 @@ void Polygon::setCircuit() {
     std::vector<double> vecX = this->vectorX;
     std::vector<double> vecY = this->vectorY;
 
-    vecX.push_back(vecX[0]);
-    vecY.push_back(vecY[0]);
 
-    for (int i = 0; i < vecY.size(); i++) {
-        if (vecY[i] < this->minLocal && vecY[i + 1] > this->maxLocal && vecY[i + 1] < vecY[i]) {
-            vectorAllXLeft.push_back(vecX[i]);
-            vectorAllYLeft.push_back(vecY[i]);
-        } else if (vecY[i] < this->minLocal && vecY[i] > this->maxLocal && vecY[i + 1] < vecY[i]) {
-            vectorAllXLeft.push_back(vecX[i]);
-            vectorAllYLeft.push_back(vecY[i]);
+        vecX.push_back(vecX[0]);
+        vecY.push_back(vecY[0]);
+
+        for (int i = 0; i < vecY.size(); i++) {
+            if (vecY[i] < this->minLocal && vecY[i + 1] > this->maxLocal && vecY[i + 1] < vecY[i]) {
+                vectorAllXLeft.push_back(vecX[i]);
+                vectorAllYLeft.push_back(vecY[i]);
+            } else if (vecY[i] < this->minLocal && vecY[i] > this->maxLocal && vecY[i + 1] < vecY[i]) {
+                vectorAllXLeft.push_back(vecX[i]);
+                vectorAllYLeft.push_back(vecY[i]);
+            }
+            if (vecY[i] > this->maxLocal && vecY[i + 1] < this->minLocal && vecY[i + 1] > vecY[i]) {
+                vectorAllXRight.push_back(vecX[i]);
+                vectorAllYRight.push_back(vecY[i]);
+            } else if (vecY[i] > this->maxLocal && vecY[i] < this->minLocal && vecY[i + 1] > vecY[i]) {
+                vectorAllXRight.push_back(vecX[i]);
+                vectorAllYRight.push_back(vecY[i]);
+            }
         }
-        if (vecY[i] > this->maxLocal && vecY[i + 1] < this->minLocal && vecY[i + 1] > vecY[i]) {
-            vectorAllXRight.push_back(vecX[i]);
-            vectorAllYRight.push_back(vecY[i]);
-        } else if (vecY[i] > this->maxLocal && vecY[i] < this->minLocal && vecY[i + 1] > vecY[i]) {
-            vectorAllXRight.push_back(vecX[i]);
-            vectorAllYRight.push_back(vecY[i]);
-        }
-    }
 
-    std::cout << "Wektor X lewy:" << std::endl;
-    for (it = vectorAllXLeft.begin(); it != vectorAllXLeft.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << "\nWektor Y lewy: " << std::endl;
-    for (it = vectorAllYLeft.begin(); it != vectorAllYLeft.end(); ++it) {
-        std::cout << *it << " ";
-    }
+//    std::cout << "Wektor X lewy:" << std::endl;
+//    for (it = vectorAllXLeft.begin(); it != vectorAllXLeft.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//    std::cout << "\nWektor Y lewy: " << std::endl;
+//    for (it = vectorAllYLeft.begin(); it != vectorAllYLeft.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//
+//    std::cout << "Wektor X prawy:" << std::endl;
+//    for (it = vectorAllXRight.begin(); it != vectorAllXRight.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
+//    std::cout << "\nWektor Y prawy: " << std::endl;
+//    for (it = vectorAllYRight.begin(); it != vectorAllYRight.end(); ++it) {
+//        std::cout << *it << " ";
+//    }
 
-    std::cout << "Wektor X prawy:" << std::endl;
-    for (it = vectorAllXRight.begin(); it != vectorAllXRight.end(); ++it) {
-        std::cout << *it << " ";
-    }
-    std::cout << "\nWektor Y prawy: " << std::endl;
-    for (it = vectorAllYRight.begin(); it != vectorAllYRight.end(); ++it) {
-        std::cout << *it << " ";
-    }
-
-    this->circuit = 0;
-
+        this->circuit = 0;
 
 
         this->circuit = this->circuit +
@@ -409,6 +404,8 @@ void Polygon::printOutput() {
         std::cout << "Jądro istnieje" << std::endl;
     } else {
         std::cout << "Brak jądra" << std::endl;
+        std::cout << "Min lokalne: " << this->minLocal << " Max lokalne: " << this->maxLocal << std::endl;
+        return;
     }
     std::cout << "Min lokalne: " << this->minLocal << " Max lokalne: " << this->maxLocal << std::endl;
     this->setBottomLeftCornerX();
