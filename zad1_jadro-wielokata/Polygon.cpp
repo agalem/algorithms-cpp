@@ -376,8 +376,8 @@ void Polygon::setCircuit() {
 
         if (vectorAllXRight.empty()) {
             this->circuit = this->circuit +
-                            this->findSectionLength(this->topLeftCornerX, this->bottomLeftCornerX, this->minLocal,
-                                                    this->maxLocal);
+                            this->findSectionLength(this->bottomRightCornerX, this->topRightCornerX, this->maxLocal,
+                                                    this->minLocal);
         } else if (vectorAllXRight.size() == 1) {
             this->circuit = this->circuit +
                             this->findSectionLength(this->bottomRightCornerX, vectorAllXRight.front(), this->maxLocal,
