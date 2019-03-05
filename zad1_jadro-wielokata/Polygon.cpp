@@ -25,12 +25,16 @@ int Polygon::checkTurningDirection(int pointIndex) {
     }
 
     double compute = ((x2 - x0)*(y1 - y0)) - ((x1-x0)*(y2-y0));
-    if(compute > 0 && y0 > y1 && y1 <= y2 ) {
+    if(compute > 0 && y0 > y1 && y1 < y2 ) {
         //z punktu przechodzimy w prawo, w górę osi y
         return -1;
-    } else if (compute > 0 && y0 < y1 && y1 >= y2) {
+    } else if(compute >  0 && y0 > y1 && y1 == y2) {
+        return -2;
+    } else if (compute > 0 && y0 < y1 && y1 > y2) {
         //z punktu przechodzimy w prawo, w dół osi y
         return 1;
+    } else if(compute > 0 && y0 < y1 && y1 == y2) {
+        return 2;
     }
     return 0;
 }
@@ -44,12 +48,26 @@ void Polygon::getMaxAndMinLocal() {
 
     double resultMax, resultMin;
 
-    int i;
+    int i, j;
     for(i=0; i<vecY.size() - 1; i++) {
         if(checkTurningDirection(i) == 1){
             vecMaxLoc.push_back(vecY[i]);
+        } else if(checkTurningDirection(i) == 2) {
+            vecY.push_back(vecY.front());
+            for(j=i; j<vecY.size() - 2; j++) {
+                if(vecY[j+1] < vecY[j]) {
+                    vecMaxLoc.push_back(vecY[j]);
+                }
+            }
         } else if (checkTurningDirection(i) == -1) {
             vecMinLoc.push_back(vecY[i]);
+        } else if (checkTurningDirection(i) == -2) {
+            vecY.push_back(vecY.front());
+            for(j = i; j<vecY.size() - 2; j++) {
+                if(vecY[j+1] > vecY[j]) {
+                    vecMinLoc.push_back(vecY[j]);
+                }
+            }
         }
     }
 

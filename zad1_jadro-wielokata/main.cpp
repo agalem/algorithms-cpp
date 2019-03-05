@@ -13,12 +13,12 @@ int main() {
     //double arrY[] = {2,4,1,7};
     //double arrX[] = {3,5,5,3};
     //double arrY[] = {2,4,8,6};
-    double arrX[] = {15, 20, 20, 18, 16, 15};
-    double arrY[] = {2, 2, 6, 4, 4, 6};
+    //double arrX[] = {15, 20, 20, 19, 16, 15};
+    //double arrY[] = {2, 2, 6, 4, 4, 6};
     //double arrX[] = {9,10,12, 13, 12, 11, 8};
     //double arrY[] = {2, 6, 1, 8, 5, 9, 8};
-    //double arrX[] = {1, 3, 2, 5, 4, 5, 1};
-    //double arrY[] = {2, 4, 4, 6, 6, 8, 8};
+    double arrX[] = {1, 4, 4, 2, 3, 1, 2};
+    double arrY[] = {1, 1, 7, 5, 5, 3, 3};
 
 
     std::cout << "Rozmiar tab x: " << (sizeof(arrX)/sizeof(*arrX)) << " Rozmiar tab y: " << (sizeof(arrY)/sizeof(*arrY)) << std::endl;
