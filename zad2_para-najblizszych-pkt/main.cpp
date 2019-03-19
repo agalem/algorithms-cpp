@@ -39,9 +39,9 @@ int main() {
 
     result = findNearestPoints(pointsVec, setX, setY);
 
-    cout<<"Najblizej lezace punkty: ";
-    cout<<"("<<result.a.x<<","<<result.a.y<<") - ("<<result.b.x<<","<<result.b.y<<")"<<endl;
-    cout<<"Odleglosc miedzy nimi wynosi: "<<getDistance(result.a, result.b)<<endl;
+    cout<<"Najbliższe punkty: ";
+    cout<< result.a.x<<", "<< result.a.y << " oraz " <<result.b.x << ", "<< result.b.y << endl;
+    cout<<"Odległość między nimi: "<< result.distance << endl;
 
     return 0;
 }
