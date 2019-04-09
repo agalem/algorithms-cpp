@@ -25,7 +25,7 @@ private:
     double circuit;
     int checkTurningDirection(int pointIndex);
     void getMaxAndMinLocal();
-    int checkNucleus();
+    int checkIfExist();
     double countA(double x1, double x2, double y1, double y2);
     double countB(double x1, double x2, double y1, double y2);
     double countX(double y, double x1, double x2, double y1, double y2);

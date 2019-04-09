@@ -28,13 +28,17 @@ int Polygon::checkTurningDirection(int pointIndex) {
     if(compute > 0 && y0 > y1 && y1 < y2 ) {
         //z punktu przechodzimy w prawo, w górę osi y
         return -1;
-    } else if(compute >  0 && y0 > y1 && y1 == y2) {
-        return -2;
     } else if (compute > 0 && y0 < y1 && y1 > y2) {
         //z punktu przechodzimy w prawo, w dół osi y
         return 1;
-    } else if(compute > 0 && y0 < y1 && y1 == y2) {
+    }
+
+    //obsługa "zębow"
+    if(compute > 0 && y0 < y1 && y1 == y2) {
+        //max lokalne
         return 2;
+    } else if (compute > 0 && y0 > y1 && y1 == y2) {
+        return -2;
     }
     return 0;
 }
@@ -49,23 +53,24 @@ void Polygon::getMaxAndMinLocal() {
     double resultMax, resultMin;
 
     int i, j;
-    for(i=0; i<vecY.size() - 1; i++) {
+    for(i=0; i<vecY.size() ; i++) {
         if(checkTurningDirection(i) == 1){
             vecMaxLoc.push_back(vecY[i]);
-        } else if(checkTurningDirection(i) == 2) {
-            vecY.push_back(vecY.front());
-            for(j=i; j<vecY.size() - 2; j++) {
-                if(vecY[j+1] < vecY[j]) {
-                    vecMaxLoc.push_back(vecY[j]);
-                }
-            }
         } else if (checkTurningDirection(i) == -1) {
             vecMinLoc.push_back(vecY[i]);
+        }
+        if(checkTurningDirection(i) == 2) {
+            for(j = i; j<vecY.size(); j++) {
+                if(vecY[j] < vecY[i] && vecX[j] > vecX[i] && checkTurningDirection(j) == 0) {
+                    vecMaxLoc.push_back(vecY[i]);
+                    break;
+                }
+            }
         } else if (checkTurningDirection(i) == -2) {
-            vecY.push_back(vecY.front());
-            for(j = i; j<vecY.size() - 2; j++) {
-                if(vecY[j+1] > vecY[j]) {
-                    vecMinLoc.push_back(vecY[j]);
+            for(j = i; j<vecY.size(); j++) {
+                if(vecY[j] > vecY[i] && vecX[j] < vecX[i] && checkTurningDirection(j) == 0) {
+                    vecMinLoc.push_back(vecY[i]);
+                    break;
                 }
             }
         }
@@ -92,7 +97,7 @@ void Polygon::getMaxAndMinLocal() {
     this->minLocal = resultMin;
 }
 
-int Polygon::checkNucleus() {
+int Polygon::checkIfExist() {
     this->getMaxAndMinLocal();
     return this->minLocal >= this->maxLocal;
 }
@@ -149,21 +154,10 @@ void Polygon::setTopRightCornerX() {
         resultMaxIndex = std::max_element(vectorAllX.begin(), vectorAllX.end());
         this->topRightCornerX = vectorAllX[std::distance(vectorAllX.begin(), resultMaxIndex)];
     } else {
-        this->topRightCornerX = this->countX(this->minLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
+        this->topRightCornerX = this->countX(this->minLocal, vectorAllX[0], vectorAllX[1], vectorAllY[0], vectorAllY[1]);
     }
 
-//    std::cout << "Wektor X:" << std::endl;
-//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//    std::cout << "\nWektor Y: " << std::endl;
-//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//
-//
-//
- std::cout << "\nPrawy górny róg: " << this->topRightCornerX << std::endl;
+    std::cout << "\nPrawy górny róg: " << this->topRightCornerX << std::endl;
 
 }
 
@@ -193,19 +187,10 @@ void Polygon::setTopLeftCornerX() {
         resultMinIndex = std::min_element(vectorAllX.begin(), vectorAllX.end());
         this->topLeftCornerX = vectorAllX[std::distance(vectorAllX.begin(), resultMinIndex)];
     } else {
-        this->topLeftCornerX = this->countX(this->minLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
+        this->topLeftCornerX = this->countX(this->minLocal, vectorAllX[0], vectorAllX[1], vectorAllY[0], vectorAllY[1]);
     }
 
-//
-//    std::cout << "Wektor X:" << std::endl;
-//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//    std::cout << "\nWektor Y: " << std::endl;
-//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//
+
     std::cout << "\nLewy górny róg: " << this->topLeftCornerX << std::endl;
 
 }
@@ -237,18 +222,9 @@ void Polygon::setBottomLeftCornerX() {
         resultMinIndex = std::min_element(vectorAllX.begin(), vectorAllX.end());
         this->bottomLeftCornerX = vectorAllX[std::distance(vectorAllX.begin(), resultMinIndex)];
     } else {
-        this->bottomLeftCornerX = this->countX(this->maxLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
+        this->bottomLeftCornerX = this->countX(this->maxLocal, vectorAllX[0], vectorAllX[1], vectorAllY[0], vectorAllY[1]);
     }
 
-//    std::cout << "Wektor X:" << std::endl;
-//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//    std::cout << "\nWektor Y: " << std::endl;
-//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//
     std::cout << "\nLewy dolny róg: " << this->bottomLeftCornerX << std::endl;
 
 }
@@ -260,6 +236,7 @@ void Polygon::setBottomRightCornerX() {
 
     std::vector<double> vecX = this->vectorX;
     std::vector<double> vecY = this->vectorY;
+
 
     vecX.push_back(vecX[0]);
     vecY.push_back(vecY[0]);
@@ -279,18 +256,9 @@ void Polygon::setBottomRightCornerX() {
         resultMinIndex = std::max_element(vectorAllX.begin(), vectorAllX.end());
         this->bottomRightCornerX = vectorAllX[std::distance(vectorAllX.begin(), resultMinIndex)];
     } else {
-        this->bottomRightCornerX = this->countX(this->maxLocal, vectorAllX.front(), vectorAllX.back(), vectorAllY.front(), vectorAllY.back());
+        this->bottomRightCornerX = this->countX(this->maxLocal, vectorAllX[0], vectorAllX[1], vectorAllY[0], vectorAllY[1]);
     }
 
-//    std::cout << "Wektor X:" << std::endl;
-//    for(it = vectorAllX.begin(); it != vectorAllX.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//    std::cout << "\nWektor Y: " << std::endl;
-//    for(it = vectorAllY.begin(); it != vectorAllY.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//
     std::cout << "\nPrawy dolny róg: " << this->bottomRightCornerX << std::endl;
 }
 
@@ -312,113 +280,100 @@ void Polygon::setCircuit() {
     std::vector<double> vecY = this->vectorY;
 
 
-        vecX.push_back(vecX[0]);
-        vecY.push_back(vecY[0]);
+    vecX.push_back(vecX[0]);
+    vecY.push_back(vecY[0]);
 
-        for (int i = 0; i < vecY.size(); i++) {
-            if (vecY[i] < this->minLocal && vecY[i + 1] > this->maxLocal && vecY[i + 1] < vecY[i]) {
-                vectorAllXLeft.push_back(vecX[i]);
-                vectorAllYLeft.push_back(vecY[i]);
-            } else if (vecY[i] < this->minLocal && vecY[i] > this->maxLocal && vecY[i + 1] < vecY[i]) {
-                vectorAllXLeft.push_back(vecX[i]);
-                vectorAllYLeft.push_back(vecY[i]);
-            }
-            if (vecY[i] > this->maxLocal && vecY[i + 1] < this->minLocal && vecY[i + 1] > vecY[i]) {
-                vectorAllXRight.push_back(vecX[i]);
-                vectorAllYRight.push_back(vecY[i]);
-            } else if (vecY[i] > this->maxLocal && vecY[i] < this->minLocal && vecY[i + 1] > vecY[i]) {
-                vectorAllXRight.push_back(vecX[i]);
-                vectorAllYRight.push_back(vecY[i]);
-            }
+    for (int i = 1; i < vecY.size(); i++) {
+
+        //punkty z lewego boku
+        if (vecY[i] < this->minLocal && vecY[i] > this->maxLocal &&
+            (vecY[i + 1] < vecY[i] || vecY[i - 1] > vecY[i])) {
+            vectorAllXLeft.push_back(vecX[i]);
+            vectorAllYLeft.push_back(vecY[i]);
         }
+        //punkty z prawego boku
+        if (vecY[i] < this->minLocal && vecY[i] > this->maxLocal &&
+            (vecY[i + 1] > vecY[i] || vecY[i - 1] < vecY[i])) {
+            vectorAllXRight.push_back(vecX[i]);
+            vectorAllYRight.push_back(vecY[i]);
+        }
+    }
 
-//    std::cout << "Wektor X lewy:" << std::endl;
-//    for (it = vectorAllXLeft.begin(); it != vectorAllXLeft.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//    std::cout << "\nWektor Y lewy: " << std::endl;
-//    for (it = vectorAllYLeft.begin(); it != vectorAllYLeft.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//
-//    std::cout << "Wektor X prawy:" << std::endl;
-//    for (it = vectorAllXRight.begin(); it != vectorAllXRight.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-//    std::cout << "\nWektor Y prawy: " << std::endl;
-//    for (it = vectorAllYRight.begin(); it != vectorAllYRight.end(); ++it) {
-//        std::cout << *it << " ";
-//    }
-
-        this->circuit = 0;
+    this->circuit = 0;
 
 
+    //Obwód góra
+    this->circuit = this->circuit +
+                    this->findSectionLength(this->topLeftCornerX, this->topRightCornerX, this->minLocal,
+                                            this->minLocal);
+    //Obwód dół
+    this->circuit = this->circuit +
+                    this->findSectionLength(this->bottomLeftCornerX, this->bottomRightCornerX, this->maxLocal,
+                                            this->maxLocal);
+
+    if (vectorAllXLeft.empty()) {
         this->circuit = this->circuit +
-                        this->findSectionLength(this->topLeftCornerX, this->topRightCornerX, this->minLocal,
-                                                this->minLocal);
-        this->circuit = this->circuit +
-                        this->findSectionLength(this->bottomLeftCornerX, this->bottomRightCornerX, this->maxLocal,
+                        this->findSectionLength(this->topLeftCornerX, this->bottomLeftCornerX, this->minLocal,
                                                 this->maxLocal);
+    } else if (vectorAllXLeft.size() == 1) {
+        this->circuit = this->circuit +
+                        this->findSectionLength(this->topLeftCornerX, vectorAllXLeft.front(), this->minLocal,
+                                                vectorAllYLeft.front()) +
+                        this->findSectionLength(vectorAllXLeft.front(), this->bottomLeftCornerX,
+                                                vectorAllYLeft.front(),
+                                                this->maxLocal);
+    } else {
+        this->circuit = this->circuit +
+                        this->findSectionLength(this->topLeftCornerX, vectorAllXLeft.front(), this->minLocal,
+                                                vectorAllYLeft.front());
 
-        if (vectorAllXLeft.empty()) {
+        for (int i = 0; i < vectorAllXLeft.size() - 1; i++) {
             this->circuit = this->circuit +
-                            this->findSectionLength(this->topLeftCornerX, this->bottomLeftCornerX, this->minLocal,
-                                                    this->maxLocal);
-        } else if (vectorAllXLeft.size() == 1) {
-            this->circuit = this->circuit +
-                            this->findSectionLength(this->topLeftCornerX, vectorAllXLeft.front(), this->minLocal,
-                                                    vectorAllYLeft.front()) +
-                            this->findSectionLength(vectorAllXLeft.front(), this->bottomLeftCornerX,
-                                                    vectorAllYLeft.front(),
-                                                    this->maxLocal);
-        } else {
-            this->circuit = this->circuit +
-                            this->findSectionLength(this->topLeftCornerX, vectorAllXLeft.front(), this->minLocal,
-                                                    vectorAllYLeft.front());
-            for (int i = 0; i < vectorAllXLeft.size() - 1; i++) {
-                this->circuit = this->circuit +
-                                this->findSectionLength(vectorAllXLeft[i], vectorAllXLeft[i + 1], vectorAllYLeft[i],
-                                                        vectorAllYLeft[i + 1]);
-            }
-            this->circuit = this->circuit +
-                            this->findSectionLength(vectorAllXLeft.back(), this->bottomLeftCornerX,
-                                                    vectorAllYLeft.back(),
-                                                    this->maxLocal);
+                            this->findSectionLength(vectorAllXLeft[i], vectorAllXLeft[i + 1], vectorAllYLeft[i],
+                                                    vectorAllYLeft[i + 1]);
+
         }
+        this->circuit = this->circuit +
+                        this->findSectionLength(vectorAllXLeft.back(), this->bottomLeftCornerX,
+                                                vectorAllYLeft.back(),
+                                                this->maxLocal);
+    }
 
 
-        if (vectorAllXRight.empty()) {
+    if (vectorAllXRight.empty()) {
+        this->circuit = this->circuit +
+                        this->findSectionLength(this->bottomRightCornerX, this->topRightCornerX, this->maxLocal,
+                                                this->minLocal);
+
+    } else if (vectorAllXRight.size() == 1) {
+        this->circuit = this->circuit +
+                        this->findSectionLength(this->bottomRightCornerX, vectorAllXRight.front(), this->maxLocal,
+                                                vectorAllYRight.front()) +
+                        this->findSectionLength(vectorAllXRight.front(), this->topRightCornerX,
+                                                vectorAllYRight.front(),
+                                                this->minLocal);
+
+    } else {
+        this->circuit = this->circuit +
+                        this->findSectionLength(this->bottomRightCornerX, vectorAllXRight.front(), this->maxLocal,
+                                                vectorAllYRight.front());
+        for (int i = 0; i < vectorAllXRight.size() - 1; i++) {
             this->circuit = this->circuit +
-                            this->findSectionLength(this->bottomRightCornerX, this->topRightCornerX, this->maxLocal,
-                                                    this->minLocal);
-        } else if (vectorAllXRight.size() == 1) {
-            this->circuit = this->circuit +
-                            this->findSectionLength(this->bottomRightCornerX, vectorAllXRight.front(), this->maxLocal,
-                                                    vectorAllYRight.front()) +
-                            this->findSectionLength(vectorAllXRight.front(), this->topRightCornerX,
-                                                    vectorAllYRight.front(),
-                                                    this->minLocal);
-        } else {
-            this->circuit = this->circuit +
-                            this->findSectionLength(this->bottomRightCornerX, vectorAllXRight.front(), this->maxLocal,
-                                                    vectorAllYRight.front());
-            for (int i = 0; i < vectorAllXRight.size() - 1; i++) {
-                this->circuit = this->circuit +
-                                this->findSectionLength(vectorAllXRight[i], vectorAllXRight[i + 1], vectorAllYRight[i],
-                                                        vectorAllYRight[i + 1]);
-            }
-            this->circuit = this->circuit +
-                            this->findSectionLength(vectorAllXRight.back(), this->topRightCornerX,
-                                                    vectorAllYRight.back(),
-                                                    this->minLocal);
+                            this->findSectionLength(vectorAllXRight[i], vectorAllXRight[i + 1], vectorAllYRight[i],
+                                                    vectorAllYRight[i + 1]);
         }
+        this->circuit = this->circuit +
+                        this->findSectionLength(vectorAllXRight.back(), this->topRightCornerX,
+                                                vectorAllYRight.back(),
+                                                this->minLocal);
+    }
 
 
-    std::cout << "Obwód: " << this->circuit << std::endl;
+    std::cout << "\n\nObwód: " << this->circuit << std::endl;
 }
 
 void Polygon::printOutput() {
-    if(this->checkNucleus()) {
+    if(this->checkIfExist()) {
         std::cout << "Jądro istnieje" << std::endl;
     } else {
         std::cout << "Brak jądra" << std::endl;

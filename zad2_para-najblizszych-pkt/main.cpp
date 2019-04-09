@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm>
 #include <cmath>
+#include <ctime>
+
 
 #include "Point.h"
 #include "Segment.h"
@@ -13,6 +15,7 @@ void createVector(const double *arr1, const double *arr2, int size, vector<Point
 bool sortByX(Point a, Point b);
 bool sortByY(Point a, Point b);
 double getDistance(Point a, Point b);
+void fillFunc(double[]);
 
 Segment comparePointsDistance(vector<Point> pointsVec);
 Segment findNearestPoints(vector<Point> pointsVec, vector<Point> tabX, vector<Point> tabY);
@@ -20,16 +23,44 @@ Segment findNearestPoints(vector<Point> pointsVec, vector<Point> tabX, vector<Po
 int main() {
 
     vector<Point> pointsVec, setX, setY;
-    vector<Point>::iterator i;
     vector<Segment> allResults;
     Segment result;
 
-    double arrX[] = {-6, -5, -3, 1, 5, 7, 8};
-    double arrY[] = {4, -3, 7, 1, -7, 6, -2};
+    int size = 1005;
 
-    int size = sizeof(arrX) / sizeof(arrX[0]);
+    double arrX[size];
+    double arrY[size];
 
-    createVector(arrX, arrY, size, &pointsVec);
+    double j;
+
+    for(int i=0; i<=1000; i++) {
+        j = double(i) / 100;
+        //cout << j << " ";
+        arrX[i] = 200.0 + j;
+        arrY[i] = 100.0 * i;
+    }
+    cout << "\n\n";
+
+    arrX[1001] = 0;
+    arrX[1002] = 100;
+    arrX[1003] = 1300;
+    arrX[1004] = 1400;
+
+    arrY[1001] = 0;
+    arrY[1002] = 0;
+    arrY[1003] = 0;
+    arrY[1004] = 0;
+
+
+
+
+    //double arrX[] = {-6, -5, -3, 1, 5, 7, 8};
+    //double arrY[] = {4, -3, 7, 1, -7, 6, -2};
+
+
+    int sizeVec = sizeof(arrX) / sizeof(arrX[0]);
+
+    createVector(arrX, arrY, sizeVec, &pointsVec);
 
     setX = pointsVec;
     setY = pointsVec;
@@ -101,7 +132,6 @@ Segment findNearestPoints(vector<Point> pointsVec, vector<Point> tabX, vector<Po
     Segment result = {{0,0},{0,0}};
     Segment temp = {{0,0},{0,0}};
 
-
     if(size <= 3) {
         return comparePointsDistance(pointsVec);
     } else {
@@ -118,8 +148,10 @@ Segment findNearestPoints(vector<Point> pointsVec, vector<Point> tabX, vector<Po
 
         for(int i=0; i<size; i++) {
             if(tabY[i].x < tabX[middle].x) {
+                //na lewo od prostej l
                 tabYLeft.push_back(tabY[i]);
             } else {
+                //na prawo od prostej l
                 tabYRight.push_back(tabY[i]);
             }
         }
@@ -132,22 +164,25 @@ Segment findNearestPoints(vector<Point> pointsVec, vector<Point> tabX, vector<Po
 
         double dist = min(distInLeftSegment, distInRightSegment);
 
-
-        vector<Point> lineY;
+        vector<Point> smallerY;
 
         for(int i=0; i<size; i++) {
             if((tabY[i].x > tabX[middle].x-dist) && (tabY[i].x < tabX[middle].x+dist)) {
-                lineY.push_back(tabY[i]);
+                smallerY.push_back(tabY[i]);
             }
         }
 
         for(int i=0; i<size-1; i++) {
-            for (int j = i+1; j<size && (lineY[j].y - lineY[i].y) < dist; j++) {
-                temp.a = lineY[i];
-                temp.b = lineY[j];
-                if (getDistance(lineY[i], lineY[j]) < dist) {
-                    result = temp;
-                    result.distance = getDistance(lineY[i], lineY[j]);
+            for (int j = i+1; j<size; j++) {
+                if(smallerY[j].y - smallerY[i].y < dist) {
+                    temp.a = smallerY[i];
+                    temp.b = smallerY[j];
+                    if (getDistance(smallerY[i], smallerY[j]) < dist) {
+                        result = temp;
+                        result.distance = getDistance(smallerY[i], smallerY[j]);
+                    }
+                } else {
+                    break;
                 }
             }
         }
