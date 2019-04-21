@@ -8,10 +8,18 @@ using namespace std;
 
 class Tree {
 public:
-    vector<Point> points;
-    Point dividing;
-    int depth;
+    Point storedPoint;
+    double minXLeft;
+    double minXRight;
+    double maxXLeft;
+    double maxXRight;
+    double minYBottom;
+    double minYTop;
+    double maxYBottom;
+    double maxYTop;
+    char sortedBy;
     Tree *left, *right;
 };
+
 
 #endif //ZAD3_KD_DRZEWA_TREE_H

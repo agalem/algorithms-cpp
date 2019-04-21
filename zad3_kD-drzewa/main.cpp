@@ -23,17 +23,22 @@ bool sortY(Point a, Point b) { return a.y < b.y; }
 
 int main(void) {
     vector<Point> points;
+    vector<Point> sortedX;
+    vector<Point> sortedY;
     vector<Point> result;
 
     double tab_x[] = {1, 2, 4, 4, 4, 5, 7, 7};
     double tab_y[] = {3, 5, 1, 2, 7, 4, 5, 7};
 
-
     int size = sizeof(tab_x)/sizeof(tab_x[0]);
     fillVector(tab_x, tab_y, size, &points);
 
+    sortedX = sortedY = points;
+    sort(sortedX.begin(), sortedX.end(), sortX);
+    sort(sortedY.begin(), sortedY.end(), sortY);
+
     Tree *kDtree;
-    Area areaToSearch = fillArea(3, 6, 2, 5);
+    Area areaToSearch = fillArea(7, 7, 7, 7);
 
     kDtree = buildTree(points, 0);
     searchArea(kDtree, areaToSearch, result);
@@ -45,7 +50,7 @@ int main(void) {
 
 void printPoints(vector<Point> tab) {
     for(int i=0; i<tab.size(); i++) {
-        cout<<"("<<tab[i].x<<","<<tab[i].y<<")\t";
+        cout<<"( "<<tab[i].x<<", "<<tab[i].y<<" )\t";
     }
     cout<<endl;
 }
@@ -74,7 +79,6 @@ Area fillArea(double minX, double maxX, double minY, double maxY) {
 
 Tree* buildTree(vector<Point> tab, int height) {
     Tree *result = new Tree;
-    result->points = tab;
     int size = tab.size();
     int half = size/2;
 
@@ -82,36 +86,45 @@ Tree* buildTree(vector<Point> tab, int height) {
     tabX = tabY = tab;
 
     if(size == 1) {
-        result->dividing = tab[0];
-        result->depth = height;
+
+        result->storedPoint = tab[0];
         result->left = NULL;
         result->right = NULL;
 
-        //cout << "Korzeń: x: " << result->dividing.x << "  y: " << result->dividing.y << endl;
 
     } else if (height % 2 == 0) {
 
         sort(tabX.begin(), tabX.end(), sortX);
-        result->dividing = tabX[half];
 
         vector<Point> tabLeftX (tabX.begin(), tabX.begin() + half);
         vector<Point> tabRightX (tabX.begin() + half, tabX.end());
 
+        result->minXLeft = tabX[0].x;
+        result->maxXLeft = tabX[half].x;
+        result->minXRight = tabX[half + 1].x;
+        result->maxXRight = tabX[tabX.size() - 1].x;
+
+        result->sortedBy = 'x';
+
         height = height + 1;
-        result->depth = height;
         result->left = buildTree(tabLeftX, height);
         result->right = buildTree(tabRightX, height);
 
-    } else {
 
+    } else {
         sort(tabY.begin(), tabY.end(), sortY);
-        result->dividing = tabY[half];
 
         vector<Point> tabLeftY(tabY.begin(), tabY.begin() + half);
         vector<Point> tabRightY(tabY.begin() + half, tabY.end());
 
+        result->minYBottom = tabY[0].y;
+        result->maxYBottom = tabY[half].y;
+        result->minYTop = tabY[half + 1].y;
+        result->maxYTop = tabY[tabY.size() - 1].y;
+
+        result->sortedBy = 'y';
+
         height = height + 1;
-        result->depth = height;
         result->left = buildTree(tabLeftY, height);
         result->right = buildTree(tabRightY, height);
     }
@@ -119,29 +132,72 @@ Tree* buildTree(vector<Point> tab, int height) {
     return result;
 }
 
-
 vector<Point> searchArea(Tree *tree, Area area, vector<Point> &result) {
 
     if(tree->left == NULL && tree->right == NULL) {
 
-        if(tree->dividing.x >= area.minX &&
-           tree->dividing.x <= area.maxX &&
-           tree->dividing.y >= area.minY &&
-           tree->dividing.y <= area.maxY) {
+        if(tree->storedPoint.x >= area.minX &&
+           tree->storedPoint.x <= area.maxX &&
+           tree->storedPoint.y >= area.minY &&
+           tree->storedPoint.y <= area.maxY) {
 
-            result.push_back(tree->dividing);
-
+            result.push_back(tree->storedPoint);
         }
 
     } else {
+
         if(tree->left != NULL) {
-            searchArea(tree->left, area, result);
+
+            if(tree->sortedBy == 'x') {
+               //przecina się
+               // 1 -> całość w
+               // 2 -> "pochłania"
+               // 3 -> przecina lewą krawędź
+               // 4 -> przecina prawą krawędź
+               if((tree->minXLeft >= area.minX && tree->maxXLeft <= area.maxX) ||
+                  (tree->minXLeft < area.minX && tree->maxXLeft > area.minX ) ||
+                  (tree->minXLeft <= area.minX && tree->maxXLeft >= area.minX) ||
+                  (tree->minXLeft <= area.maxX && tree->maxXLeft >= area.maxX)) {
+
+                   searchArea(tree->left, area, result);
+
+               }
+            } else if (tree->sortedBy == 'y') {
+                if((tree->minYBottom >= area.minY && tree->maxYBottom <= area.maxY) ||
+                   (tree->minYBottom < area.minY && tree->maxYBottom > area.maxY) ||
+                   (tree->minYBottom < area.maxY && tree->maxYBottom >= area.maxY) ||
+                   (tree->minYBottom < area.minY && tree->maxYBottom >= area.minY)) {
+
+                    searchArea(tree->left, area, result);
+                }
+            }
+
         }
         if(tree->right != NULL) {
-            searchArea(tree->right, area, result);
+            if(tree->sortedBy == 'x') {
+                //przecina się
+                // 1 -> całość w
+                // 2 -> "pochłania"
+                // 3 -> przecina lewą krawędź
+                // 4 -> przecina prawą krawędź
+                if(((tree->minXRight >= area.minX && tree->maxXRight <= area.maxX) ||
+                   (tree->minXRight < area.minX && tree->maxXRight > area.minX ) ||
+                   (tree->minXRight <= area.minX && tree->maxXRight >= area.minX) ||
+                   (tree->minXRight <= area.maxX && tree->maxXRight >= area.maxX))) {
+
+                    searchArea(tree->right, area, result);
+                }
+            } else if (tree->sortedBy == 'y') {
+                if((tree->minYTop >= area.minY && tree->maxYTop <= area.maxY) ||
+                   (tree->minYTop < area.minY && tree->maxYTop > area.maxY) ||
+                   (tree->minYTop < area.maxY && tree->maxYTop >= area.maxY) ||
+                   (tree->minYTop < area.minY && tree->maxYTop >= area.minY)) {
+
+                    searchArea(tree->right, area, result);
+                }
+            }
         }
     }
 
     return result;
-
 }
