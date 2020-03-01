@@ -1,0 +1,1 @@
+Algorytm sprawdzajacy czy wielokąt posiada jądro obliczając maksimum i minimum lokalne.
